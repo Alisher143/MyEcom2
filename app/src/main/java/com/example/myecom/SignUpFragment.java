@@ -1,5 +1,6 @@
 package com.example.myecom;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -7,11 +8,20 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -21,6 +31,19 @@ import android.widget.TextView;
 public class SignUpFragment extends Fragment {
     private TextView alreadyHaveAnAccount;
     private FrameLayout parentFrameLayout;
+
+    private EditText email;
+    private EditText fullName;
+    private EditText password;
+    private EditText confirmPassword;
+
+    private ImageButton closeBtn;
+    private Button signUpBtn;
+    private ProgressBar progressBar;
+
+    private String emailPattern= "[a-zA-Z0-9._-]+@[a-z]+\\.[a-z]+";
+
+    private FirebaseAuth firebaseAuth;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -66,8 +89,18 @@ public class SignUpFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_sign_up, container, false);
-        alreadyHaveAnAccount= view.findViewById(R.id.tv_already_have_an_account);
         parentFrameLayout= getActivity().findViewById(R.id.register_framelayout);
+        alreadyHaveAnAccount= view.findViewById(R.id.tv_already_have_an_account);
+        email= view.findViewById(R.id.sign_up_email);
+        fullName= view.findViewById(R.id.sign_up_fullname);
+        password= view.findViewById(R.id.sign_up_password);
+        confirmPassword= view.findViewById(R.id.sign_up_confirm_password);
+
+        closeBtn= view.findViewById(R.id.sign_up_close_btn);
+        signUpBtn= view.findViewById(R.id.sign_up_btn);
+
+        progressBar= view.findViewById(R.id.sign_up_progressbar);
+        firebaseAuth= FirebaseAuth.getInstance();
         return view;
     }
 
@@ -80,11 +113,115 @@ public class SignUpFragment extends Fragment {
                 setFragment(new SignInFragment());
             }
         });
+
+        email.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    checkInputs();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        fullName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    checkInputs();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        password.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    checkInputs();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        confirmPassword.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    checkInputs();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        signUpBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkEmailAndPassword();
+            }
+        });
     }
+
+
     private void setFragment(Fragment fragment) {
         FragmentTransaction fragmentTransaction= getActivity().getSupportFragmentManager().beginTransaction();
         fragmentTransaction.setCustomAnimations(R.anim.slide_from_left,R.anim.slideout_from_right);
         fragmentTransaction.replace(parentFrameLayout.getId(),fragment);
         fragmentTransaction.commit();
+    }
+
+    private void checkInputs() {
+        if(!TextUtils.isEmpty(email.getText())){
+            if(!TextUtils.isEmpty(fullName.getText())){
+                if (!TextUtils.isEmpty(password.getText()) && password.length() >=8 ) {
+                    if(!TextUtils.isEmpty(confirmPassword.getText())){
+                        signUpBtn.setEnabled(true);
+                        signUpBtn.setTextColor(Color.rgb(255,255,255));
+                    }
+                    else{
+                         signUpBtn.setEnabled(false);
+                         signUpBtn.setTextColor(Color.argb(50,255,255,255));
+                    }
+                }else{
+                    signUpBtn.setEnabled(false);
+                    signUpBtn.setTextColor(Color.argb(50,255,255,255));
+                }
+            }else{
+                signUpBtn.setEnabled(false);
+                signUpBtn.setTextColor(Color.argb(50,255,255,255));
+            }
+        }
+        else{
+            signUpBtn.setEnabled(false);
+            signUpBtn.setTextColor(Color.argb(50,255,255,255));
+        }
+    }
+
+    private void checkEmailAndPassword() {
+            if(email.getText().toString().matches())
     }
 }
